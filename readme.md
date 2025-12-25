@@ -1,9 +1,9 @@
 # ZENITH-ECHO_CORE-01
 
-**.NET 10 기반의 고성능 비동기 에코 서버 엔진 - [단계 01: 시스템 초기화 및 기본 통신]**
+**.NET 10 기반의 고성능 비동기 에코 서버 엔진 - [단계 02: 다중 접속 및 지속 연결]**
 
 ## 1. 프로젝트 개요 (Overview)
-본 프로젝트는 하드웨어와 운영체제 커널에 밀착된 **C# 기반 고성능 네트워크 엔진**을 구축하기 위한 첫 번째 단계입니다. 코드 레벨에서 시스템 자원을 정교하게 제어하는 것을 목표로 합니다.
+Phase 01의 단발성 통신을 확장하여, 다중 클라이언트의 동시 접속을 지원하고 연결이 유지되는 동안 실시간 데이터를 처리하는 **병렬 처리 에코 엔진**을 구축합니다.
 
 ## 2. 하드웨어 및 개발 환경 (Environment)
 - **Machine**: Surface Pro 11 (5G)
@@ -13,13 +13,14 @@
 - **Language**: C#
 
 ## 3. 핵심 구현 명세 (Core Specifications)
-- **Asynchronous Acceptance**: `AcceptAsync()`를 통한 IOCP(I/O Completion Port) 모델 활용으로 불필요한 스레드 점유 방지.
-- **Direct Memory Access**: `byte[]` 버퍼를 직접 할당하여 데이터의 실체(Byte)를 직접 제어.
-- **Resource Lifecycle**: `using` 구문을 활용하여 소켓 핸들의 즉각적인 해제 및 안정성 확보.
+- **Multi-Threading (Task.Run)**: 각 클라이언트 연결을 개별 태스크로 분리하여 멀티코어 기반의 병렬 처리 구현.
+- **Persistent Connection**: 연결 종료 시그널(`received == 0`)이 오기 전까지 세션을 유지하는 루프 구조 설계.
+- **Resource Management (RAII)**: `using` 블록을 활용하여 세션 종료 시 소켓 자원(핸들) 자동 해제 처리.
+- **Modern C# Syntax**: Target-typed new(`new(...)`) 및 최신 비동기 구문을 활용한 코드 최적화.
 
-## 4. 첫 번째 단계의 성과 (Phase 01 Achievement)
-- **Zero-State 탈출**: .NET 10 환경 구축 및 ARM64 네이티브 바이너리 실행 확인.
-- **통신 기초 확립**: TCP/IP 9000번 포트 리스닝 및 단일 클라이언트 에코(Echo) 성공.
+## 4. 두 번째 단계의 성과 (Phase 02 Achievement)
+- **동시성(Concurrency) 확보**: 다수의 클라이언트가 독립적으로 데이터를 송수신하는 멀티 에코 환경 확인.
+- **비정상 종료 대응**: 클라이언트의 강제 연결 해제 시에도 서버 시스템이 중단되지 않고 자원을 회수하는 안정성 확보.
 
 ## 5. 실행 (Run)
 ```bash
